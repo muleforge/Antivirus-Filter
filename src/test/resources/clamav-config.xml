@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesource.org/schema/mule/core/2.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:file="http://www.mulesource.org/schema/mule/file/2.1"
+	xmlns:vm="http://www.mulesource.org/schema/mule/vm/2.1"
+	xmlns:test="http://www.mulesource.org/schema/mule/test/2.1"
+	xsi:schemaLocation="
+       http://www.mulesource.org/schema/mule/test/2.1 http://www.mulesource.org/schema/mule/test/2.1/mule-test.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.mulesource.org/schema/mule/core/2.1 http://www.mulesource.org/schema/mule/core/2.1/mule.xsd
+       http://www.mulesource.org/schema/mule/file/2.1 http://www.mulesource.org/schema/mule/file/2.1/mule-file.xsd
+       http://www.mulesource.org/schema/mule/vm/2.1 http://www.mulesource.org/schema/mule/vm/2.1/mule-vm.xsd">
+
+	<vm:connector name="vmQueue" queueEvents="true">
+
+	</vm:connector>
+
+	<file:connector streaming="false" name="fileConnector" pollingFrequency="1000000"
+		autoDelete="false" fileAge="1000">
+
+	</file:connector>
+
+	<file:endpoint path="./src/test/resources/virusfiles"  name="get"
+		connector-ref="fileConnector" />
+
+	<custom-filter
+		class="org.mule.routing.filters.antivirus.AntiVirusFilter"
+		name="clamFilter">
+		<spring:property name="provider" ref="tcpscanner_clam"></spring:property>
+		<spring:property name="properties">
+			<spring:props>
+				<spring:prop key="host">localhost</spring:prop>
+				<spring:prop key="port">9998</spring:prop>
+				
+				
+				
+				
+			</spring:props>
+		</spring:property>
+	</custom-filter>
+
+
+	<model name="ESTest">
+
+		<service name="FolderTO">
+			<inbound>
+				<file:inbound-endpoint ref="get">
+
+					<!-- <file:file-to-byte-array-transformer />  -->
+
+				</file:inbound-endpoint>
+
+
+			</inbound>
+			<bridge-component />
+			<outbound>
+
+				<filtering-router>
+
+					<vm:outbound-endpoint address="vm://out" />
+					<filter ref="clamFilter" />
+				</filtering-router>
+			</outbound>
+		</service>
+	</model>
+	
+	<spring:bean id="tcpscanner_clam"
+		class="org.mule.routing.filters.antivirus.spi.clamav.ClamAVTCPScannerProvider">
+	</spring:bean>
+
+</mule>

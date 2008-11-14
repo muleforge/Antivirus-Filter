@@ -13,7 +13,7 @@
 	by the assembly plugin. -->
 	<packaging>jar</packaging>
 	<name>AntiVirus Filter</name>
-	<description>A Mule Filter implementation which scans payload of mule messages for viruses. This filter will make use of an underlying Virus scanning engine like Antivir, F-Secure, Kaspersky, ClamAV etc). </description>
+	<description>A Mule Filter implementation which scans payload of mule messages for viruses. This filter will make use of an underlying Virus scanning engine like F-Secure, Kaspersky, ClamAV etc). </description>
 	<distributionManagement>
 		<repository>
 			<id>muleforge.webdav.releases</id>

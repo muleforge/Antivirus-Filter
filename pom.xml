@@ -8,14 +8,38 @@
 	<name>AntiVirus Filter</name>
 	<description>A Mule Filter implementation which scans payload of mule messages for viruses. This filter will make use of an underlying Virus scanning engine like Antivir, F-Secure, Kaspersky, ClamAV etc). </description>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>2.1.1.0-SNAPSHOT</version>
 	<properties>
-		<muleVersion>1.4.1</muleVersion>
-		<shortId>JDEDWARDS</shortId>
+	    <muleVersion>2.1.1</muleVersion>
+		<log4jVersion>1.2.14</log4jVersion>
+		<slf4jVersion>1.5.5</slf4jVersion>
+		<commonsPoolVersion>1.4</commonsPoolVersion>
+		<shortId>ANTIVIRUSFILTER</shortId>
 		<domainName>antivirusfilter</domainName>
 		<license.id>CPAL 1.0</license.id>
 		<license.url>http://www.mulesource.org/display/MULEFORGE/CPAL</license.url>
 	</properties>
+	
+		<organization>
+		<name>akquinet AG</name>
+		<url>http://www.akquinet.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>hsaly</id>
+			<name>Hendrik Saly</name>
+			<email>hendrik.saly@akquinet.de</email>
+			<url>http://www.akquinet.de</url>
+			<organization>akquinet AG</organization>
+			<organizationUrl>http://www.akquinet.com</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	
 	<issueManagement>
 		<system>Jira</system>
 		<url>http://mule.mulesource.org/jira/browse/${shortId}</url>
@@ -59,6 +83,16 @@
 		</extensions>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<encoding>ISO-8859-1</encoding>
+				</configuration>
+			</plugin>
+		
+			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<finalName>${artifactId}-${version}</finalName>
@@ -68,6 +102,33 @@
 					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[1.5.0,]</version>
+								</requireJavaVersion>
+								<requireMavenVersion>
+									<!-- minimum version is 2.0.8, higher versions allowed -->
+									<version>[2.0.8,)</version>
+								</requireMavenVersion>
+
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			
 		</plugins>
 	</build>
 	<reporting>
@@ -142,35 +203,20 @@
 					<effort>Max</effort>
 				</configuration -->
 			</plugin>
+			
+			
 		</plugins>
 	</reporting>
 	<dependencies>
-		<!-- Mule Dependencies -->
-		<dependency>
-			<groupId>org.mule</groupId>
-			<artifactId>mule-core</artifactId>
-			<version>${muleVersion}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-module-client</artifactId>
 			<version>${muleVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.tests</groupId>
-			<artifactId>mule-tests-functional</artifactId>
-			<version>${muleVersion}</version>
-			<scope>test</scope>
-		</dependency>
-	<!-- Mule Transport Dependencies -->
-		<dependency>
 			<groupId>org.mule.transports</groupId>
 			<artifactId>mule-transport-vm</artifactId>
-			<version>${muleVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.transports</groupId>
-			<artifactId>mule-transport-tcp</artifactId>
 			<version>${muleVersion}</version>
 		</dependency>
 		<dependency>
@@ -179,9 +225,34 @@
 			<version>${muleVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.mule.transports</groupId>
-			<artifactId>mule-transport-stream</artifactId>
+			<groupId>org.mule.tests</groupId>
+			<artifactId>mule-tests-functional</artifactId>
 			<version>${muleVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4jVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4jVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4jVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4jVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+			<version>${commonsPoolVersion}</version>
 		</dependency>
 	</dependencies>
 	<url>http://www.muleforge.org/projects/${shortId}</url>
